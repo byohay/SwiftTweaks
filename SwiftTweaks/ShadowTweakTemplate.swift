@@ -36,13 +36,14 @@ public struct ShadowTweakTemplate: TweakGroupTemplateType {
 		self.collectionName = collectionName
 		self.groupName = groupName
 
-		self.color = Tweak(collectionName, groupName, "Color", color ?? ShadowTweakTemplate.colorDefault)
+		self.color = Tweak(collectionName, groupName, "Color", color ?? ShadowTweakTemplate.colorDefault, true)
 
 		self.opacity = Tweak(
 			collectionName: collectionName,
 			groupName: groupName,
 			tweakName: "Opacity",
 			defaultParameters: ShadowTweakTemplate.opacityDefaults,
+			editable: true,
 			customDefaultValue: opacity
 		)
 
@@ -51,6 +52,7 @@ public struct ShadowTweakTemplate: TweakGroupTemplateType {
 			groupName: groupName,
 			tweakName: "Offset Y",
 			defaultParameters: ShadowTweakTemplate.offsetYDefaults,
+			editable: true,
 			customDefaultValue: offsetY
 		)
 
@@ -59,6 +61,7 @@ public struct ShadowTweakTemplate: TweakGroupTemplateType {
 			groupName: groupName,
 			tweakName: "Offset X",
 			defaultParameters: ShadowTweakTemplate.offsetXDefaults,
+			editable: true,
 			customDefaultValue: offsetX
 		)
 
@@ -67,6 +70,7 @@ public struct ShadowTweakTemplate: TweakGroupTemplateType {
 			groupName: groupName,
 			tweakName: "Radius",
 			defaultParameters: ShadowTweakTemplate.radiusDefaults,
+			editable: true,
 			customDefaultValue: radius
 		)
 	}

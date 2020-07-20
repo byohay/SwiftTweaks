@@ -40,6 +40,7 @@ public struct EdgeInsetsTweakTemplate: TweakGroupTemplateType {
                 groupName: groupName,
                 tweakName: tweakName,
                 defaultParameters: EdgeInsetsTweakTemplate.edgeInsetDefaultParameters,
+								editable: true,
                 customDefaultValue: customDefaultValue
             )
 		}

@@ -41,6 +41,7 @@ public struct SpringAnimationTweakTemplate: TweakGroupTemplateType {
 			groupName: groupName,
 			tweakName: "Duration",
 			defaultParameters: SpringAnimationTweakTemplate.durationDefaults,
+			editable: true,
 			customDefaultValue: duration
 		)
 
@@ -49,6 +50,7 @@ public struct SpringAnimationTweakTemplate: TweakGroupTemplateType {
 			groupName: groupName,
 			tweakName: "Delay",
 			defaultParameters: SpringAnimationTweakTemplate.delayDefaults,
+			editable: true,
 			customDefaultValue: delay
 		)
 
@@ -57,6 +59,7 @@ public struct SpringAnimationTweakTemplate: TweakGroupTemplateType {
 			groupName: groupName,
 			tweakName: "Damping",
 			defaultParameters: SpringAnimationTweakTemplate.dampingDefaults,
+			editable: true,
 			customDefaultValue: damping
 		)
 
@@ -65,6 +68,7 @@ public struct SpringAnimationTweakTemplate: TweakGroupTemplateType {
 			groupName: groupName,
 			tweakName: "Initial V.",
 			defaultParameters: SpringAnimationTweakTemplate.initialSpringVelocityDefaults,
+			editable: true,
 			customDefaultValue: initialSpringVelocity
 		)
 	}

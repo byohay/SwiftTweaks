@@ -25,12 +25,13 @@ public struct ComparableTweakDefaultParameters<T: Comparable> {
 }
 
 public extension Tweak where T: Comparable {
-	init(collectionName: String, groupName: String, tweakName: String, defaultParameters: ComparableTweakDefaultParameters<T>, customDefaultValue: T?) {
+	init(collectionName: String, groupName: String, tweakName: String, defaultParameters: ComparableTweakDefaultParameters<T>, editable: Bool, customDefaultValue: T?) {
 		self.init(
 			collectionName: collectionName,
 			groupName: groupName,
 			tweakName: tweakName,
 			defaultValue: customDefaultValue ?? defaultParameters.defaultValue,
+			editable: editable,
 			minimumValue: defaultParameters.minValue,
 			maximumValue: defaultParameters.maxValue,
 			stepSize: defaultParameters.stepSize

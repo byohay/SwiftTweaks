@@ -18,12 +18,13 @@ public struct Tweak<T: TweakableType> {
 	public let groupName: String
 	public let tweakName: String
 	internal let defaultValue: T
+	internal let editable: Bool
 	internal let minimumValue: T?	// Only supported for T: Comparable
 	internal let maximumValue: T?	// Only supported for T: Comparable
 	internal let stepSize: T?		// Only supported for T: Comparable
 	internal let options: [T]?		// Only supported for T: StringOption
 
-	internal init(collectionName: String, groupName: String, tweakName: String, defaultValue: T, minimumValue: T? = nil, maximumValue: T? = nil, stepSize: T? = nil, options: [T]? = nil) {
+	internal init(collectionName: String, groupName: String, tweakName: String, defaultValue: T, editable: Bool, minimumValue: T? = nil, maximumValue: T? = nil, stepSize: T? = nil, options: [T]? = nil) {
 
 		[collectionName, groupName, tweakName].forEach {
 			if $0.contains(TweakIdentifierSeparator) {
@@ -35,6 +36,7 @@ public struct Tweak<T: TweakableType> {
 		self.groupName = groupName
 		self.tweakName = tweakName
 		self.defaultValue = defaultValue
+		self.editable = editable
 		self.minimumValue = minimumValue
 		self.maximumValue = maximumValue
 		self.stepSize = stepSize
@@ -45,21 +47,23 @@ public struct Tweak<T: TweakableType> {
 internal let TweakIdentifierSeparator = "|"
 
 extension Tweak {
-	public init(_ collectionName: String, _ groupName: String, _ tweakName: String, _ defaultValue: T) {
+	public init(_ collectionName: String, _ groupName: String, _ tweakName: String, _ defaultValue: T, _ editable: Bool) {
 		self.init(
 			collectionName: collectionName,
 			groupName: groupName,
 			tweakName: tweakName,
-			defaultValue: defaultValue
+			defaultValue: defaultValue,
+			editable: editable
 		)
 	}
 	
-	public init(_ collectionName: String, _ groupName: String, _ tweakName: String, _ defaultValueProvider: () -> T) {
+	public init(_ collectionName: String, _ groupName: String, _ tweakName: String, _ defaultValueProvider: () -> T, editable: Bool) {
 		self.init(
 			collectionName: collectionName,
 			groupName: groupName,
 			tweakName: tweakName,
-			defaultValue: defaultValueProvider()
+			defaultValue: defaultValueProvider(),
+			editable: editable
 		)
 	}
 
@@ -69,7 +73,7 @@ extension Tweak where T: Comparable {
 	/// Creates a Tweak<T> where T: Comparable
 	/// You can optionally provide a min / max / stepSize to restrict the bounds and behavior of a tweak.
 	/// The step size is "how much does the value change when I tap the UIStepper"
-	public init(_ collectionName: String, _ groupName: String, _ tweakName: String, defaultValue: T, min minimumValue: T? = nil, max maximumValue: T? = nil, stepSize: T? = nil) {
+	public init(_ collectionName: String, _ groupName: String, _ tweakName: String, defaultValue: T, editable: Bool, min minimumValue: T? = nil, max maximumValue: T? = nil, stepSize: T? = nil) {
 
 		// Assert that the tweak's defaultValue is between its min and max (if they exist)
 		if clip(defaultValue, minimumValue, maximumValue) != defaultValue {
@@ -81,6 +85,7 @@ extension Tweak where T: Comparable {
 			groupName: groupName,
 			tweakName: tweakName,
 			defaultValue: defaultValue,
+			editable: editable,
 			minimumValue: minimumValue,
 			maximumValue: maximumValue,
 			stepSize: stepSize
@@ -89,7 +94,7 @@ extension Tweak where T: Comparable {
 }
 
 extension Tweak where T == StringOption {
-	public init(_ collectionName: String, _ groupName: String, _ tweakName: String, options: [String], defaultValue: String? = nil) {
+	public init(_ collectionName: String, _ groupName: String, _ tweakName: String, options: [String], editable: Bool, defaultValue: String? = nil) {
 		precondition(!options.isEmpty, "Options list cannot be empty (stringList tweak \"\(tweakName)\")")
 		precondition(
 			defaultValue == nil || options.contains(defaultValue!),
@@ -101,6 +106,7 @@ extension Tweak where T == StringOption {
 			groupName: groupName,
 			tweakName: tweakName,
 			defaultValue: StringOption(value: defaultValue ?? options[0]),
+			editable: editable,
 			options: options.map(StringOption.init)
 		)
 	}
@@ -108,13 +114,14 @@ extension Tweak where T == StringOption {
 
 extension Tweak {
 	@available(*, deprecated, message: "replaced by 'init(_:_:_options:defaultValue:)'", renamed: "init(_:_:_options:defaultValue:)")
-	public static func stringList(_ collectionName: String, _ groupName: String, _ tweakName: String, options: [String], defaultValue: String? = nil) -> Tweak<StringOption> {
+	public static func stringList(_ collectionName: String, _ groupName: String, _ tweakName: String, options: [String], editable: Bool, defaultValue: String? = nil) -> Tweak<StringOption> {
 
 		return Tweak<StringOption>(
 		collectionName,
 		groupName,
 		tweakName,
 		options: options,
+		editable: editable,
 		defaultValue: defaultValue
 		)
 	}

@@ -53,7 +53,7 @@ extension TweakAction: TweakableType {
 extension Tweak where T == TweakAction {
 	
 	public init(_ collectionName: String, _ groupName: String, _ tweakName: String) {
-		self.init(collectionName, groupName, tweakName, TweakAction())
+		self.init(collectionName, groupName, tweakName, TweakAction(), false)
 	}
 	
 	@discardableResult

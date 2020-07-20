@@ -36,6 +36,7 @@ public struct BasicAnimationTweakTemplate: TweakGroupTemplateType {
 			groupName: groupName,
 			tweakName: "Duration",
 			defaultParameters: BasicAnimationTweakTemplate.durationDefaults,
+			editable: true,
 			customDefaultValue: duration
 		)
 
@@ -44,6 +45,7 @@ public struct BasicAnimationTweakTemplate: TweakGroupTemplateType {
 			groupName: groupName,
 			tweakName: "Delay",
 			defaultParameters: BasicAnimationTweakTemplate.delayDefaults,
+			editable: true,
 			customDefaultValue: delay
 		)
 	}
