@@ -18,6 +18,7 @@ public struct AnyTweak: TweakType {
 
 	public var tweakViewDataType: TweakViewDataType { return tweak.tweakViewDataType }
 	public var tweakDefaultData: TweakDefaultData { return tweak.tweakDefaultData }
+	public var editable: Bool { return tweak.editable }
 
 	public init(tweak: TweakType) {
 		self.tweak = tweak.tweak
@@ -34,6 +35,7 @@ public protocol TweakType: TweakClusterType {
 
 	var tweakViewDataType: TweakViewDataType { get }
 	var tweakDefaultData: TweakDefaultData { get }
+	var editable: Bool { get }
 }
 
 extension TweakType {

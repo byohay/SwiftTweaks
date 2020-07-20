@@ -272,7 +272,7 @@ internal final class TweakTableCell: UITableViewCell {
 		// Update accessory internals based on viewData
 		var textFieldEnabled: Bool
 		switch viewData {
-		case let .boolean(value: value, _):
+		case let .boolean(value: value, _, _):
 			switchControl.isOn = value
 			textFieldEnabled = false
 
@@ -292,12 +292,12 @@ internal final class TweakTableCell: UITableViewCell {
 			textField.keyboardType = .decimalPad
 			textFieldEnabled = true
 
-		case let .color(value: value, _):
+		case let .color(value: value, _, _):
 			colorChit.backgroundColor = value
 			textField.text = value.hexString
 			textFieldEnabled = false
 
-		case let .string(value, _):
+		case let .string(value, _, _):
 			textField.text = value
 			textField.placeholder = NSLocalizedString("Tap to edit", comment: "Text field placeholder for editable text")
 			textField.keyboardType = .default
@@ -310,7 +310,7 @@ internal final class TweakTableCell: UITableViewCell {
 			textFieldEnabled = false
 		}
 
-		textFieldEnabled = textFieldEnabled && !self.isInFloatingTweakGroupWindow
+		textFieldEnabled = textFieldEnabled && !self.isInFloatingTweakGroupWindow && viewData.editable
 
 		textField.isUserInteractionEnabled = textFieldEnabled
 		textField.textColor = textFieldEnabled ? AppTheme.Colors.textPrimary : AppTheme.Colors.controlSecondary
@@ -334,8 +334,8 @@ internal final class TweakTableCell: UITableViewCell {
 
 	@objc private func switchChanged(_ sender: UISwitch) {
 		switch viewData! {
-		case let .boolean(_, defaultValue: defaultValue):
-			viewData = .boolean(value: switchControl.isOn, defaultValue: defaultValue)
+		case let .boolean(_, defaultValue: defaultValue, editable: editable):
+			viewData = .boolean(value: switchControl.isOn, defaultValue: defaultValue, editable: editable)
 			delegate?.tweakCellDidChangeCurrentValue(self)
 		default:
 			assertionFailure("Shouldn't be able to toggle switch if view data isn't Boolean type")
@@ -344,14 +344,17 @@ internal final class TweakTableCell: UITableViewCell {
 
 	@objc private func stepperChanged(_ sender: UIStepper) {
 		switch viewData! {
-		case let .integer(_, defaultValue: defaultValue, min: min, max: max, stepSize: step):
-			viewData = TweakViewData(type: .integer, value: Int(stepperControl.value), defaultValue: defaultValue, minimum: min, maximum: max, stepSize: step, options: nil)
+		case let .integer(_, defaultValue: defaultValue, min: min, max: max, stepSize: step, editable: editable):
+			viewData = TweakViewData(type: .integer, value: Int(stepperControl.value), defaultValue: defaultValue, minimum: min, maximum: max, stepSize: step, options: nil,
+															 editable: editable)
 			delegate?.tweakCellDidChangeCurrentValue(self)
-		case let .float(_, defaultValue: defaultValue, min: min, max: max, stepSize: step):
-			viewData = TweakViewData(type: .cgFloat, value: CGFloat(stepperControl.value), defaultValue: defaultValue, minimum: min, maximum: max, stepSize: step, options: nil)
+		case let .float(_, defaultValue: defaultValue, min: min, max: max, stepSize: step, editable: editable):
+			viewData = TweakViewData(type: .cgFloat, value: CGFloat(stepperControl.value), defaultValue: defaultValue, minimum: min, maximum: max, stepSize: step, options: nil,
+															 editable: editable)
 			delegate?.tweakCellDidChangeCurrentValue(self)
-		case let .doubleTweak(_, defaultValue: defaultValue, min: min, max: max, stepSize: step):
-			viewData = TweakViewData(type: .double, value: stepperControl.value, defaultValue: defaultValue, minimum: min, maximum: max, stepSize: step, options: nil)
+		case let .doubleTweak(_, defaultValue: defaultValue, min: min, max: max, stepSize: step, editable: editable):
+			viewData = TweakViewData(type: .double, value: stepperControl.value, defaultValue: defaultValue, minimum: min, maximum: max, stepSize: step, options: nil,
+															 editable: editable)
 			delegate?.tweakCellDidChangeCurrentValue(self)
 		case .color, .boolean, .action, .stringList, .string:
 			assertionFailure("Shouldn't be able to update text field with a Color/Boolean/Action/StringList/String tweak.")
@@ -371,37 +374,40 @@ extension TweakTableCell: UITextFieldDelegate {
 
 	func textFieldDidEndEditing(_ textField: UITextField) {
 		switch viewData! {
-		case let .integer(_, defaultValue: defaultValue, min: minimum, max: maximum, stepSize: step):
+		case let .integer(_, defaultValue: defaultValue, min: minimum, max: maximum, stepSize: step, editable: editable):
 			if let text = textField.text, let newValue = Int(text) {
-				viewData = TweakViewData(type: .integer, value: newValue, defaultValue: defaultValue, minimum: minimum, maximum: maximum, stepSize: step, options: nil)
+				viewData = TweakViewData(type: .integer, value: newValue, defaultValue: defaultValue, minimum: minimum, maximum: maximum, stepSize: step, options: nil,
+																 editable: editable)
 				delegate?.tweakCellDidChangeCurrentValue(self)
 			} else {
 				updateSubviews()
 			}
-		case let .float(_, defaultValue: defaultValue, min: minimum, max: maximum, stepSize: step):
+		case let .float(_, defaultValue: defaultValue, min: minimum, max: maximum, stepSize: step, editable: editable):
 			if let text = textField.text, let newValue = Float(text) {
-				viewData = TweakViewData(type: .cgFloat, value: CGFloat(newValue), defaultValue: defaultValue, minimum: minimum, maximum: maximum, stepSize: step, options: nil)
+				viewData = TweakViewData(type: .cgFloat, value: CGFloat(newValue), defaultValue: defaultValue, minimum: minimum, maximum: maximum, stepSize: step, options: nil,
+																 editable: editable)
 				delegate?.tweakCellDidChangeCurrentValue(self)
 			} else {
 				updateSubviews()
 			}
-		case let .doubleTweak(_, defaultValue: defaultValue, min: minimum, max: maximum, stepSize: step):
+		case let .doubleTweak(_, defaultValue: defaultValue, min: minimum, max: maximum, stepSize: step, editable: editable):
 			if let text = textField.text, let newValue = Double(text) {
-				viewData = TweakViewData(type: .double, value: newValue, defaultValue: defaultValue, minimum: minimum, maximum: maximum, stepSize: step, options: nil)
+				viewData = TweakViewData(type: .double, value: newValue, defaultValue: defaultValue, minimum: minimum, maximum: maximum, stepSize: step, options: nil,
+																 editable: editable)
 				delegate?.tweakCellDidChangeCurrentValue(self)
 			} else {
 				updateSubviews()
 			}
-		case let .color(_, defaultValue: defaultValue):
+		case let .color(_, defaultValue: defaultValue, editable: editable):
 			if let text = textField.text, let newValue = UIColor.colorWithHexString(text) {
-				viewData = TweakViewData(type: .uiColor, value: newValue, defaultValue: defaultValue, minimum: nil, maximum: nil, stepSize: nil, options: nil)
+				viewData = TweakViewData(type: .uiColor, value: newValue, defaultValue: defaultValue, minimum: nil, maximum: nil, stepSize: nil, options: nil, editable: editable)
 				delegate?.tweakCellDidChangeCurrentValue(self)
 			} else {
 				updateSubviews()
 			}
-		case let .string(_, defaultValue):
+		case let .string(_, defaultValue, editable: editable):
 			if let newValue = textField.text {
-				viewData = TweakViewData(type: .string, value: newValue, defaultValue: defaultValue, minimum: nil, maximum: nil, stepSize: nil, options: nil)
+				viewData = TweakViewData(type: .string, value: newValue, defaultValue: defaultValue, minimum: nil, maximum: nil, stepSize: nil, options: nil, editable: editable)
 				delegate?.tweakCellDidChangeCurrentValue(self)
 			} else {
 				updateSubviews()

@@ -140,22 +140,22 @@ public final class TweakStore {
 		switch tweak.tweakDefaultData {
 		case let .boolean(defaultValue: defaultValue):
 			let currentValue = cachedValue as? Bool ?? defaultValue
-			return .boolean(value: currentValue, defaultValue: defaultValue)
+			return .boolean(value: currentValue, defaultValue: defaultValue, editable: tweak.editable)
 		case let .integer(defaultValue: defaultValue, min: min, max: max, stepSize: step):
 			let currentValue = cachedValue as? Int ?? defaultValue
-			return .integer(value: currentValue, defaultValue: defaultValue, min: min, max: max, stepSize: step)
+			return .integer(value: currentValue, defaultValue: defaultValue, min: min, max: max, stepSize: step, editable: tweak.editable)
 		case let .float(defaultValue: defaultValue, min: min, max: max, stepSize: step):
 			let currentValue = cachedValue as? CGFloat ?? defaultValue
-			return .float(value: currentValue, defaultValue: defaultValue, min: min, max: max, stepSize: step)
+			return .float(value: currentValue, defaultValue: defaultValue, min: min, max: max, stepSize: step, editable: tweak.editable)
 		case let .doubleTweak(defaultValue: defaultValue, min: min, max: max, stepSize: step):
 			let currentValue = cachedValue as? Double ?? defaultValue
-			return .doubleTweak(value: currentValue, defaultValue: defaultValue, min: min, max: max, stepSize: step)
+			return .doubleTweak(value: currentValue, defaultValue: defaultValue, min: min, max: max, stepSize: step, editable: tweak.editable)
 		case let .color(defaultValue: defaultValue):
 			let currentValue = cachedValue as? UIColor ?? defaultValue
-			return .color(value: currentValue, defaultValue: defaultValue)
+			return .color(value: currentValue, defaultValue: defaultValue, editable: tweak.editable)
 		case let .string(defaultValue):
 			let currentValue = cachedValue as? String ?? defaultValue
-			return .string(value: currentValue, defaultValue: defaultValue)
+			return .string(value: currentValue, defaultValue: defaultValue, editable: tweak.editable)
 		case let .stringList(defaultValue: defaultValue, options: options):
 			let currentValue = cachedValue as? StringOption ?? defaultValue
 			return .stringList(value: currentValue, defaultValue: defaultValue, options: options)

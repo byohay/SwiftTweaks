@@ -17,8 +17,8 @@ public struct Tweak<T: TweakableType> {
 	public let collectionName: String
 	public let groupName: String
 	public let tweakName: String
+	public let editable: Bool
 	internal let defaultValue: T
-	internal let editable: Bool
 	internal let minimumValue: T?	// Only supported for T: Comparable
 	internal let maximumValue: T?	// Only supported for T: Comparable
 	internal let stepSize: T?		// Only supported for T: Comparable

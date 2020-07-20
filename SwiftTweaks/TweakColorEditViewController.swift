@@ -25,7 +25,7 @@ internal final class TweakColorEditViewController: UIViewController {
 				tableView.reloadData()
 			}
 
-			tweakStore.setValue(.color(value: viewData.color, defaultValue: tweak.defaultValue), forTweak: AnyTweak(tweak: tweak))
+			tweakStore.setValue(.color(value: viewData.color, defaultValue: tweak.defaultValue, editable: true), forTweak: AnyTweak(tweak: tweak))
 
 			updateColorPreview()
 		}

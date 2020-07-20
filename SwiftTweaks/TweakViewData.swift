@@ -10,32 +10,32 @@ import UIKit
 
 /// View data used to populate our table cells
 internal enum TweakViewData {
-	case boolean(value: Bool, defaultValue: Bool)
-	case integer(value: Int, defaultValue: Int, min: Int?, max: Int?, stepSize: Int?)
-	case float(value: CGFloat, defaultValue: CGFloat, min: CGFloat?, max: CGFloat?, stepSize: CGFloat?)
-	case doubleTweak(value: Double, defaultValue: Double, min: Double?, max: Double?, stepSize: Double?)
-	case color(value: UIColor, defaultValue: UIColor)
-	case string(value: String, defaultValue: String)
+	case boolean(value: Bool, defaultValue: Bool, editable: Bool)
+	case integer(value: Int, defaultValue: Int, min: Int?, max: Int?, stepSize: Int?, editable: Bool)
+	case float(value: CGFloat, defaultValue: CGFloat, min: CGFloat?, max: CGFloat?, stepSize: CGFloat?, editable: Bool)
+	case doubleTweak(value: Double, defaultValue: Double, min: Double?, max: Double?, stepSize: Double?, editable: Bool)
+	case color(value: UIColor, defaultValue: UIColor, editable: Bool)
+	case string(value: String, defaultValue: String, editable: Bool)
 	case stringList(value: StringOption, defaultValue: StringOption, options: [StringOption])
 	case action(value: TweakAction)
 
-	init<T: TweakableType>(type: TweakViewDataType, value: T, defaultValue: T, minimum: T?, maximum: T?, stepSize: T?, options: [T]?) {
+	init<T: TweakableType>(type: TweakViewDataType, value: T, defaultValue: T, minimum: T?, maximum: T?, stepSize: T?, options: [T]?, editable: Bool) {
 		switch type {
 		case .boolean:
-			self = .boolean(value: value as! Bool, defaultValue: defaultValue as! Bool)
+			self = .boolean(value: value as! Bool, defaultValue: defaultValue as! Bool, editable: editable)
 		case .uiColor:
-			self = .color(value: value as! UIColor, defaultValue: defaultValue as! UIColor)
+			self = .color(value: value as! UIColor, defaultValue: defaultValue as! UIColor, editable: editable)
 		case .integer:
 			let clippedValue = clip(value as! Int, minimum as? Int, maximum as? Int)
-			self = .integer(value: clippedValue, defaultValue: defaultValue as! Int, min: minimum as? Int, max: maximum as? Int, stepSize: stepSize as? Int)
+			self = .integer(value: clippedValue, defaultValue: defaultValue as! Int, min: minimum as? Int, max: maximum as? Int, stepSize: stepSize as? Int, editable: editable)
 		case .cgFloat:
 			let clippedValue = clip(value as! CGFloat, minimum as? CGFloat, maximum as? CGFloat)
-			self = .float(value: clippedValue, defaultValue: defaultValue as! CGFloat, min: minimum as? CGFloat, max: maximum as? CGFloat, stepSize: stepSize as? CGFloat)
+			self = .float(value: clippedValue, defaultValue: defaultValue as! CGFloat, min: minimum as? CGFloat, max: maximum as? CGFloat, stepSize: stepSize as? CGFloat, editable: editable)
 		case .double:
 			let clippedValue = clip(value as! Double, minimum as? Double, maximum as? Double)
-			self = .doubleTweak(value: clippedValue, defaultValue: defaultValue as! Double, min: minimum as? Double, max: maximum as? Double, stepSize: stepSize as? Double)
+			self = .doubleTweak(value: clippedValue, defaultValue: defaultValue as! Double, min: minimum as? Double, max: maximum as? Double, stepSize: stepSize as? Double, editable: editable)
 		case .string:
-			self = .string(value: value as! String, defaultValue: defaultValue as! String)
+			self = .string(value: value as! String, defaultValue: defaultValue as! String, editable: editable)
 		case .stringList:
 			self = .stringList(value: value as! StringOption, defaultValue: defaultValue as! StringOption, options: options!.map { $0 as! StringOption })
 		case .action:
@@ -45,17 +45,17 @@ internal enum TweakViewData {
 
 	var value: TweakableType {
 		switch self {
-		case let .boolean(value: boolValue, defaultValue: _):
+		case let .boolean(value: boolValue, defaultValue: _, editable: _):
 			return boolValue
-		case let .integer(value: intValue, _, _, _, _):
+		case let .integer(value: intValue, _, _, _, _, _):
 			return intValue
-		case let .float(value: floatValue, _, _, _, _):
+		case let .float(value: floatValue, _, _, _, _, _):
 			return floatValue
-		case let .doubleTweak(value: doubleValue, _, _, _, _):
+		case let .doubleTweak(value: doubleValue, _, _, _, _, _):
 			return doubleValue
-		case let .color(value: colorValue, defaultValue: _):
+		case let .color(value: colorValue, defaultValue: _, _):
 			return colorValue
-		case let .string(stringValue, _):
+		case let .string(stringValue, _, _):
 			return stringValue
 		case let .stringList(value: stringValue, _, _):
 			return stringValue
@@ -69,35 +69,36 @@ internal enum TweakViewData {
 		switch self {
 		case .boolean, .color, .action, .string, .stringList:
 			return nil
-		case let .integer(value: intValue, _, _, _, _):
+		case let .integer(value: intValue, _, _, _, _, _):
 			return Double(intValue)
-		case let .float(value: floatValue, _, _, _, _):
+		case let .float(value: floatValue, _, _, _, _, _):
 			return Double(floatValue)
-		case let .doubleTweak(value: doubleValue, _, _, _, _):
+		case let .doubleTweak(value: doubleValue, _, _, _, _, _):
 			return doubleValue
 		}
 	}
 
+	// TODO: Consider adding editable to presentation
 	var stringRepresentation: (String, Bool) {
 		let string: String
 		let differsFromDefault: Bool
 		switch self {
-		case let .boolean(value: value, defaultValue: defaultValue):
+		case let .boolean(value: value, defaultValue: defaultValue, _):
 			string = value ? "Bool(true)" : "Bool(false)"
 			differsFromDefault = (value != defaultValue)
-		case let .integer(value: value, defaultValue: defaultValue, _, _, _):
+		case let .integer(value: value, defaultValue: defaultValue, _, _, _, _):
 			string = "Int(\(value))"
 			differsFromDefault = (value != defaultValue)
-		case let .float(value: value, defaultValue: defaultValue, _, _, _):
+		case let .float(value: value, defaultValue: defaultValue, _, _, _, _):
 			string = "Float(\(value))"
 			differsFromDefault = (value != defaultValue)
-		case let .doubleTweak(value: value, defaultValue: defaultValue, _, _, _):
+		case let .doubleTweak(value: value, defaultValue: defaultValue, _, _, _, _):
 			string = "Double(\(value))"
 			differsFromDefault = (value != defaultValue)
-		case let .color(value: value, defaultValue: defaultValue):
+		case let .color(value: value, defaultValue: defaultValue, _):
 			string = "Color(\(value.hexString), alpha: \(value.alphaValue))"
 			differsFromDefault = (value != defaultValue)
-		case let .string(value, defaultValue):
+		case let .string(value, defaultValue, _):
 			string = value
 			differsFromDefault = (value != defaultValue)
 		case let .stringList(value: value, defaultValue: defaultValue, _):
@@ -115,6 +116,27 @@ internal enum TweakViewData {
 		case .integer, .float, .doubleTweak:
 			return true
 		case .boolean, .color, .action, .string, .stringList:
+			return false
+		}
+	}
+	
+	var editable: Bool {
+		switch self {
+		case let .boolean(_, _, editable):
+			return editable
+		case let .integer(_, _, _, _, _, editable):
+			return editable
+		case let .float(_, _, _, _, _, editable):
+			return editable
+		case let .doubleTweak(_, _, _, _, _, editable):
+			return editable
+		case let .color(_, _, editable):
+			return editable
+		case let .string(_, _, editable):
+			return editable
+		case .stringList:
+			return true
+		case .action:
 			return false
 		}
 	}
@@ -157,7 +179,7 @@ internal enum TweakViewData {
 		case .boolean, .color, .action, .stringList, .string:
 			return nil
 
-		case let .integer(intValue, intDefaultValue, intMin, intMax, intStep):
+		case let .integer(intValue, intDefaultValue, intMin, intMax, intStep, _):
 			currentValue = Double(intValue)
 			defaultValue = Double(intDefaultValue)
 			minimum = intMin.map(Double.init)
@@ -165,7 +187,7 @@ internal enum TweakViewData {
 			step = intStep.map(Double.init)
 			isInteger = true
 
-		case let .float(floatValue, floatDefaultValue, floatMin, floatMax, floatStep):
+		case let .float(floatValue, floatDefaultValue, floatMin, floatMax, floatStep, _):
 			currentValue = Double(floatValue)
 			defaultValue = Double(floatDefaultValue)
 			minimum = floatMin.map(Double.init)
@@ -173,7 +195,7 @@ internal enum TweakViewData {
 			step = floatStep.map(Double.init)
 			isInteger = false
 
-		case let .doubleTweak(doubleValue, doubleDefaultValue, doubleMin, doubleMax, doubleStep):
+		case let .doubleTweak(doubleValue, doubleDefaultValue, doubleMin, doubleMax, doubleStep, _):
 			currentValue = doubleValue
 			defaultValue = doubleDefaultValue
 			minimum = doubleMin
